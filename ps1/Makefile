@@ -1,14 +1,17 @@
+BINDIR := bin/
+
 all: compile
 
 compile:
-	gcc -std=c99 ps1.c
+	test -d $(BINDIR) || mkdir $(BINDIR)
+	gcc -std=c99 -o bin/a.out ps1.c
 
 debug:
 	gcc -std=c99 -g ps1.c
 
 .PHONY:run
 run:
-	./a.out
+	./bin/a.out
 
 .PHONY:clean
 clean:
