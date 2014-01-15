@@ -78,10 +78,9 @@ void insert_node(Node** root, Node* node){
 int search(Node* root, int n){
     if(root == NULL) return 0;
 
-    if(root->value == n) return 1;
-
     if(root->value > n) search(root->left, n);
-    else search(root->right, n);
+    else if(root->value < n) search(root->right, n);
+    else return 1;
 }
 
 
@@ -141,10 +140,10 @@ double integrate(double (*function)(double), double start, double end, double st
     double integral_sum = 0;
 
     for(int i = 0; i < num_of_rect; i++) {
-        integral_sum += stepsize*(*function)(start + i*stepsize);
+        integral_sum += (*function)(start + i*stepsize);
     }
 
-    return integral_sum;
+    return stepsize*integral_sum;
 }
 
 
