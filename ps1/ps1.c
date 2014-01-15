@@ -76,7 +76,12 @@ void insert_node(Node** root, Node* node){
 // Searches for the number n in the tree rooted at root.
 // Should return 1 if the number is present, and 0 if not.
 int search(Node* root, int n){
-    return 42;
+    if(root == NULL) return 0;
+
+    if(root->value == n) return 1;
+
+    if(root->value > n) search(root->left, n);
+    else search(root->right, n);
 }
 
 
@@ -132,7 +137,14 @@ double x_cubed(double x){
 
 // Computes the definite integral of the function using the rectangle method
 double integrate(double (*function)(double), double start, double end, double stepsize){
-    return 42.0;
+    int num_of_rect = (end-start)/stepsize;
+    double integral_sum = 0;
+
+    for(int i = 0; i < num_of_rect; i++) {
+        integral_sum += stepsize*(*function)(start + i*stepsize);
+    }
+
+    return integral_sum;
 }
 
 
@@ -164,7 +176,6 @@ int main(int argc, char** argv){
     // Print the tree
     print_tree(root, 0);
 
-    /*
     // Search for the values 3 and 11 in the tree
     // and print the results
     int found_3 = search(root, 3);
@@ -175,9 +186,4 @@ int main(int argc, char** argv){
     // Should be approx 1/3 and 1/4.
     printf("%f\n", integrate(&x_squared, 0, 1, 0.001));
     printf("%f\n", integrate(&x_cubed, 0, 1, 0.001));
-    */
 }
-
-
-
-
