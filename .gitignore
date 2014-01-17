@@ -7,6 +7,10 @@
 # Bin folder
 bin/
 
+# Custom
+.DS_Store
+*.pdf
+
 # Libraries
 *.lib
 *.a
