@@ -7,6 +7,9 @@
 # Bin folder
 bin/
 
+# VIM
+*.swp
+
 # Custom
 .DS_Store
 *.pdf
