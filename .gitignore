@@ -8,7 +8,7 @@
 bin/
 
 # VIM
-*.swp
+*.sw*
 
 # Custom
 .DS_Store
