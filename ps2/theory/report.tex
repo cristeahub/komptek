@@ -211,12 +211,12 @@ The NFA in figure 1 can be converted to the following DFA. The equvalent states 
 \draw [black] (22.42,-39.12) -- (32.38,-36.78);
 \fill [black] (32.38,-36.78) -- (31.49,-36.48) -- (31.71,-37.45);
 \draw (28.07,-38.53) node [below] {$d$};
-\draw [black] (46.89,-28.96) -- (37.81,-23.04);
-\fill [black] (37.81,-23.04) -- (38.21,-23.9) -- (38.76,-23.06);
-\draw (43.3,-25.5) node [above] {$c$};
 \draw [black] (38.09,-35.01) -- (46.61,-31.69);
 \fill [black] (46.61,-31.69) -- (45.68,-31.52) -- (46.04,-32.45);
 \draw (43.3,-33.87) node [below] {$b$};
+\draw [black] (35.3,-33.1) -- (35.3,-24.4);
+\fill [black] (35.3,-24.4) -- (34.8,-25.2) -- (35.8,-25.2);
+\draw (35.8,-28.75) node [right] {$c$};
 \end{tikzpicture}
 \end{center}
 
@@ -274,4 +274,10 @@ The end conclusion is that removing this in a regex creates a lot of problems an
 \section{Grammars}
 %----------------------------------------------------------------------------------------
 
+\subsection{Part a)}
+An ambiguous grammar is a grammar that can produce more than one parse tree for a given input. In more detail you can say that an ambiguous grammar is a formal grammar for which it exists more than one string that can have more than one leftmost derivation. This means that when we scan a string as input, we will not be able to know how exactly what is meant.
+
+An example of this is the classic $1-2+3$. Do we mean $(1-2)+3$ or $1-(2+3)$?
+
+To solve this 
 \end{document}
