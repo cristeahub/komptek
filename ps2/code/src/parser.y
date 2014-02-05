@@ -164,7 +164,7 @@ class_list              :   class { $$ = CN(class_list_n, 1, $1); }
                         |   class_list class { $$ = CN(class_list_n, 2, $1, $2); }
                         ;
 class                   :   _CLASS_ variable HAS declaration_list WITH function_list END
-                                { $$ = CN(class_n, 3, $2, $4, $5); }
+                                { $$ = CN(class_n, 3, $2, $4, $6); }
                         ;
 declaration_list        :   declaration_list declaration_statement';' { $$ = CN(declaration_list_n, 2, $1, $2); }
                         |   { $$ = NULL; }
@@ -204,20 +204,20 @@ expression              :   constant { $$ = CNE(expression_n, constant_e, 1, $1)
                         |   expression LEQUAL expression { $$ = CNE(expression_n, lequal_e, 2, $1, $3); }
                         |   expression AND expression { $$ = CNE(expression_n, and_e, 2, $1, $3); }
                         |   expression OR expression { $$ = CNE(expression_n, or_e, 2, $1, $3); }
-                        |   '-' expression { $$ = CNE(expression_n, uminus_e, 1, $1); }
-                        |   '!' expression { $$ = CNE(expression_n, not_e, 1, $1); }
-                        |   '(' expression ')' { $$ = CN(expression_n, 1, $1); }
+                        |   '-' expression %prec UMINUS { $$ = CNE(expression_n, uminus_e, 1, $2); }
+                        |   '!' expression %prec UMINUS { $$ = CNE(expression_n, not_e, 1, $2); }
+                        |   '(' expression ')' { $$ = CN(expression_n, 1, $2); }
                         |   call { $$ = CN(expression_n, 1, $1); }
-                        |   THIS { $$ = CNE(expression_n, this_e, 1, $1); }
+                        |   THIS { $$ = CNE(expression_n, this_e, 0); }
                         |   lvalue { $$ = CN(expression_n, 1, $1); }
                         |   NEW type { $$ = CNE(expression_n, new_e, 1, $2); }
                         ;
-call                    :   variable'('argument_list')' { $$ = CNE(expression_n, func_call_e, 2, $1, $3); }
-                        |   expression'.'variable'('argument_list')'
+call                    :   variable '(' argument_list ')' { $$ = CNE(expression_n, func_call_e, 2, $1, $3); }
+                        |   expression '.' variable '(' argument_list ')'
                                 { $$ = CNE(expression_n, meth_call_e, 3, $1, $3, $5); }
                         ;
 lvalue                  :   variable { $$ = CNE(expression_n, variable_e, 1, $1); }
-                        |   expression'.'variable { $$ = CNE(expression_n, class_field_e, 2, $1, $2); }
+                        |   expression '.' variable { $$ = CNE(expression_n, class_field_e, 2, $1, $3); }
                         ;
 constant                :   TRUE_CONST
                                 {    
@@ -253,7 +253,7 @@ type                    :   INT { $$ = CNT(type_n, INT_TYPE, 0); }
                         |   VOID { $$ = CNT(type_n, VOID_TYPE, 0); }
                         |   variable { $$ = CNT(type_n, CLASS_TYPE, 1, $1); }
                         ;
-variable                :   IDENTIFIER { $$ = CNL(variable_n, yytext, 0); }
+variable                :   IDENTIFIER { $$ = CNL(variable_n, STRDUP(yytext), 0); }
                         ;
 
 %% 
