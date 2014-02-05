@@ -275,7 +275,7 @@ The end conclusion is that removing this in a regex creates a lot of problems an
 %----------------------------------------------------------------------------------------
 
 \subsection{Part a)}
-An ambiguous grammar is a grammar that can produce more than one parse tree for a given input. In more detail you can say that an ambiguous grammar is a formal grammar for which it exists more than one string that can have more than one leftmost derivation. This means that when we scan a string as input, we will not be able to know how exactly what is meant.
+An ambiguous grammar is a grammar that can produce more than one parse tree for a given input. In more detail you can say that an ambiguous grammar is a formal grammar for which there exists a string that has more than one leftmost derivation. This means that when we scan a string as input, we will not be able to know exactly what is meant.
 
 An example of this is the classic $1-2+3$. Do we mean $(1-2)+3$ or $1-(2+3)$?
 
@@ -283,19 +283,19 @@ One way to solve this is precedence over operations. We do this with the unary m
 
 %----------------------------------------------------------------------------------------
 \subsection{Part b)}
-This grammar is ambiguous. The text $mvmp$ can have two parse trees. One of theese trees is: $$S -> Sp -> NvNp -> mvNp -> mvmp$$ another one is $$S -> NvN -> mvN -> mvmp$$ .
+This grammar is ambiguous. The text $mvmp$ has two possible parse trees. One of these trees is: $$S -> Sp -> NvNp -> mvNp -> mvmp$$ another one is $$S -> NvN -> mvN -> mvmp$$ .
 
 There isn't always so easy to find out if a grammar is ambiguous, but if a state goes to itself (left recursive), that is a clear sign something should be further investigated.
 
 %----------------------------------------------------------------------------------------
 \subsection{Part c)}
-A left recursive grammar is a grammar where you either directly or indirectly have a non-terminal that goes to itself plus a terminal (there is an edge case where you can skip the terminal).
+A left recursive grammar is a grammar where you either directly or indirectly have a non-terminal that points to itself plus a terminal (there is an edge case where you may skip the terminal).
 
-These types of grammars are very hard to parse, since you need to read the whole string before bulding up your parse tree. You need everything to know how it's made up.
+These types of grammars are very hard to parse, since you need to read the whole string before bulding your parse tree. You need everything to know how it's made up.
 
 %----------------------------------------------------------------------------------------
 \subsection{Part d)}
-The above grammar is left recursive. We see that $S -> ... | Sp$. This means we will have to read the whole input before knowing how it's build.
+The above grammar is left recursive. We see that $S -> ... | Sp$. This means we will have to read the whole input before knowing how it's built.
 
 %----------------------------------------------------------------------------------------
 \end{document}
