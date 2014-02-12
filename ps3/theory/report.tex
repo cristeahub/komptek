@@ -99,8 +99,14 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \section{Parsing}
 %----------------------------------------------------------------------------------------
 \subsection{Part a)}
+When you parse a string in regards to a grammar there are two main ways of constructing the parsing tree. One technique is called top-down parsing and the other bottom-up.
+
+A top-down parser uses the non-terminals of the grammar as the basis for the parsing. It starts on the start symbol of the grammar and works its way down the parse tree by changing the non-terminals one at a time. The parser might do a lot of backtracking. To test all possibilities one eveutally would need exponential memory space. This technique might need a look-a-head to work properly.
+
+As opposed to top-down parsing, bottom-up uses the terminals of the input string as basis for the parsing. One at a time it checks the next token of the input. It changes continously the input to tokens based on the grammar. When it hits the start symbol, it's done. Just like the top-down parsing technique the parser might need a look-a-head to be sure to work.
 %----------------------------------------------------------------------------------------
 \subsection{Part b)}
+
 %----------------------------------------------------------------------------------------
 % PROBLEM 2
 %----------------------------------------------------------------------------------------
