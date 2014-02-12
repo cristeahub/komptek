@@ -26,6 +26,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amsfonts,amsthm} % Math packages
 \usepackage{tikz} % drawing package
+\usepackage{hhline}
 
 \usepackage{sectsty} % Allows customizing section commands
 \allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
@@ -115,10 +116,86 @@ An LR parser is a bottom-up parser that efficiently handle deterministic context
 \section{Top-down parsing}
 %----------------------------------------------------------------------------------------
 \subsection{Part a)}
+\begin{center}
+    \begin{tabular}{ | l | l | }
+    \hline
+    First sets                              & Follow sets \\
+    \hline
+    FIRST(A) = \{ a, c, d, e, f \}          & FOLLOW(A) = \{ \$ \} \\
+    \hline
+    FIRST(B) = \{ b \}                      & FOLLOW(B) = \{ \$ \} \\
+    \hline
+    FIRST(C) = \{ b, $\epsilon$ \}          & FOLLOW(C) = \{ \$ \} \\
+    \hline
+    FIRST(D) = \{ b, d, e, $\epsilon$ \}    & FOLLOW(D) = \{ \} \\
+    \hline
+    FIRST(E) = \{ e, $\epsilon$ \}          & FOLLOW(E) = \{ \} \\
+    \hline
+    FIRST(F) = \{ c, f \}                   & FOLLOW(F) = \{ \} \\
+    \hline
+    \end{tabular}
+\end{center}
+A is put as the start symbol in this grammar.
 %----------------------------------------------------------------------------------------
 \subsection{Part b)}
+\begin{center}
+    \begin{tabular}{ | l || l | l | l | l | l | l | l | }
+    \hline
+        & a         & b         & c         & d         & e     & f     &   \$              \\
+    \hhline{|=||=|=|=|=|=|=|=|}
+    A   & A->aB     &           & A->F      & A->D      & A->D  & A->F  &                   \\
+    \hline
+    B   &           & B->bC     &           &           &       &       &                   \\
+    \hline
+    C   &           & C->bC     &           &           &       &       & C->$\epsilon$     \\
+    \hline
+    D   &           & D->EB     &           & D->dBEF   & D->EB &       &                   \\
+    \hline
+    E   &           &           &           &           & E->e  &       & E->$\epsilon$     \\
+    \hline
+    F   &           &           & F->c      &           &       & F->f  &                   \\
+    \hline
+    \end{tabular}
+\end{center}
 %----------------------------------------------------------------------------------------
 \subsection{Part c)}
+\begin{center}
+    \begin{tabular}{ | l | l | l | l | }
+    \hline
+    Stack       & Matched part      & Remaining     & Action taken          \\
+    \hhline{|=|=|=|=|}
+    A\$         &                   & dbbbf         &                       \\
+    \hline
+    D\$         &                   & dbbbf         & A->D                  \\
+    \hline
+    dBEF\$      & d                 & bbbf          & D->dBEF               \\
+    \hline
+    BEF\$       &                   & bbbf          & match                 \\
+    \hline
+    bCEF\$      & b                 & bbf           & B->bC                 \\
+    \hline
+    CEF\$       &                   & bbf           & match                 \\
+    \hline
+    bCEF\$      & b                 & bf            & C->bC                 \\
+    \hline
+    CEF\$       &                   & bf            & match                 \\
+    \hline
+    bCEF\$      & b                 & f             & C->bC                 \\
+    \hline
+    CEF\$       &                   & f             & match                 \\
+    \hline
+    EF\$        &                   & f             & C->$\epsilon$         \\
+    \hline
+    F\$         &                   & f             & E->$\epsilon$         \\
+    \hline
+    f\$         & f                 &               & f->f                  \\
+    \hline
+    \$          &                   &               & match                 \\
+    \hline
+                &                   &               & \em{accept}           \\
+    \hline
+    \end{tabular}
+\end{center}
 %----------------------------------------------------------------------------------------
 % PROBLEM 3
 %----------------------------------------------------------------------------------------
