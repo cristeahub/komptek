@@ -106,7 +106,9 @@ A top-down parser uses the non-terminals of the grammar as the basis for the par
 As opposed to top-down parsing, bottom-up uses the terminals of the input string as basis for the parsing. One at a time it checks the next token of the input. It changes continously the input to tokens based on the grammar. When it hits the start symbol, it's done. Just like the top-down parsing technique the parser might need a look-a-head to be sure to work.
 %----------------------------------------------------------------------------------------
 \subsection{Part b)}
+An LL parser is a top-down parser for the subset of context-free grammars. LL stands for left to right, leftmost derivation. An LL parser has two actions: \em{predict} that chooses which production that needs to be applied to get closer to the goal and \em{match} that matches the leftmost guessed terminal symbol with the leftmost unconsumed symbol of input.
 
+An LR parser is a bottom-up parser that efficiently handle deterministic context-free garmmars in guaranteed linear time. LR stands for left to right, rightmost derivation. An LR parser has two actions: \em{shift}, which adds the next token of input to the buffer and \em{reduce} that reduces the colleciton of terminals and non-terminals back to a terminal by reversing a production.
 %----------------------------------------------------------------------------------------
 % PROBLEM 2
 %----------------------------------------------------------------------------------------
