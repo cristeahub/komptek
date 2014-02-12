@@ -119,19 +119,19 @@ An LR parser is a bottom-up parser that efficiently handle deterministic context
 \begin{center}
     \begin{tabular}{ | l | l | }
     \hline
-    First sets                              & Follow sets \\
+    First sets                              & Follow sets                   \\
     \hline
-    FIRST(A) = \{ a, c, d, e, f \}          & FOLLOW(A) = \{ \$ \} \\
+    FIRST(A) = \{ a, b, c, d, e, f \}       & FOLLOW(A) = \{ \$ \}          \\
     \hline
-    FIRST(B) = \{ b \}                      & FOLLOW(B) = \{ \$ \} \\
+    FIRST(B) = \{ b \}                      & FOLLOW(B) = \{ e, c, f, \$ \} \\
     \hline
-    FIRST(C) = \{ b, $\epsilon$ \}          & FOLLOW(C) = \{ \$ \} \\
+    FIRST(C) = \{ b, $\epsilon$ \}          & FOLLOW(C) = \{ e, c, f, \$ \} \\
     \hline
-    FIRST(D) = \{ b, d, e, $\epsilon$ \}    & FOLLOW(D) = \{ \} \\
+    FIRST(D) = \{ b, d, e, $\epsilon$ \}    & FOLLOW(D) = \{ \$ \}          \\
     \hline
-    FIRST(E) = \{ e, $\epsilon$ \}          & FOLLOW(E) = \{ \} \\
+    FIRST(E) = \{ e, $\epsilon$ \}          & FOLLOW(E) = \{ b, c, f \}     \\
     \hline
-    FIRST(F) = \{ c, f \}                   & FOLLOW(F) = \{ \} \\
+    FIRST(F) = \{ c, f \}                   & FOLLOW(F) = \{ \$ \}          \\
     \hline
     \end{tabular}
 \end{center}
@@ -141,19 +141,19 @@ A is put as the start symbol in this grammar.
 \begin{center}
     \begin{tabular}{ | l || l | l | l | l | l | l | l | }
     \hline
-        & a         & b         & c         & d         & e     & f     &   \$              \\
+        & a         & b             & c             & d         & e             & f                 &   \$              \\
     \hhline{|=||=|=|=|=|=|=|=|}
-    A   & A->aB     &           & A->F      & A->D      & A->D  & A->F  &                   \\
+    A   & A->aB     & A-D           & A->F          & A->D      & A->D          & A->F              &                   \\
     \hline
-    B   &           & B->bC     &           &           &       &       &                   \\
+    B   &           & B->bC         &               &           &               &                   &                   \\
     \hline
-    C   &           & C->bC     &           &           &       &       & C->$\epsilon$     \\
+    C   &           & C->bC         & C->$\epsilon$ &           & C->$\epsilon$ & C->$\epsilon$     & C->$\epsilon$     \\
     \hline
-    D   &           & D->EB     &           & D->dBEF   & D->EB &       &                   \\
+    D   &           & D->EB         &               & D->dBEF   & D->EB         &                   &                   \\
     \hline
-    E   &           &           &           &           & E->e  &       & E->$\epsilon$     \\
+    E   &           & E->$\epsilon$ & E->$\epsilon$ &           & E->e          & E->$\epsilon$     &                   \\
     \hline
-    F   &           &           & F->c      &           &       & F->f  &                   \\
+    F   &           &               & F->c          &           &               & F->f              &                   \\
     \hline
     \end{tabular}
 \end{center}
