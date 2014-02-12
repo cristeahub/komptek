@@ -209,5 +209,40 @@ A is put as the start symbol in this grammar.
 \subsection{Part b)}
 %----------------------------------------------------------------------------------------
 \subsection{Part c)}
+\begin{center}
+    \begin{tabular}{ | l | l | l | l | }
+    \hline
+    Stack       & Next              & Input         & Action taken          \\
+    \hhline{|=|=|=|=|}
+                & d                 & dbbbef\$      & shift                 \\
+    \hline
+    d           & b                 & bbbef\$       & shift                 \\
+    \hline
+    db          & b                 & bbef\$        & reduce B->b           \\
+    \hline
+    dB          & b                 & bbef\$        & shift                 \\
+    \hline
+    dBb         & b                 & bef\$         & reduce B->Bb          \\
+    \hline
+    dB          & b                 & bef\$         & shift                 \\
+    \hline
+    dBb         & e                 & ef\$          & reduce B->Bb          \\
+    \hline
+    dB          & e                 & ef\$          & shift                 \\
+    \hline
+    dBe         & f                 & f\$           & reduce E->e           \\
+    \hline
+    dBE         & f                 & f\$           & shift                 \\
+    \hline
+    dBEf        & \$                & \$            & reduce F->f           \\
+    \hline
+    dBEF        & \$                & \$            & reduce D->dBEF        \\
+    \hline
+    D           & \$                & \$            & reduce A->D           \\
+    \hline
+    A           & \$                & \$            & accept                \\
+    \hline
+    \end{tabular}
+\end{center}
 %----------------------------------------------------------------------------------------
 \end{document}
