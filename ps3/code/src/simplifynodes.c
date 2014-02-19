@@ -221,8 +221,8 @@ Node_t *simplify_expression ( Node_t *root, int depth )
     }
 
     if(root->n_children == 1 &&
-            !(root->nodetype.index == NEW_E || root->nodetype.index == UMINUS_E
-                || root->nodetype.index == NOT_E)) {
+            !(root->expression_type.index == NEW_E || root->expression_type.index == UMINUS_E
+                || root->expression_type.index == NOT_E)) {
         Node_t* child = root->children[0];
         free(root->children);
         free(root);
