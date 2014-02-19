@@ -140,7 +140,10 @@ Node_t *simplify_single_child ( Node_t *root, int depth )
     }
 
     if(root->n_children == 1) {
-        return root->children[0];
+        Node_t* child = root->children[0];
+        free(root->children);
+        free(root);
+        return child;
     }
 
     return root;
@@ -220,7 +223,10 @@ Node_t *simplify_expression ( Node_t *root, int depth )
     if(root->n_children == 1 &&
             !(root->nodetype.index == NEW_E || root->nodetype.index == UMINUS_E
                 || root->nodetype.index == NOT_E)) {
-        return root->children[0];
+        Node_t* child = root->children[0];
+        free(root->children);
+        free(root);
+        return child;
     }
 
     return root;
