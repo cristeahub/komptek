@@ -1,3 +1,5 @@
 obj/
 work/
 test_runner.sh
+testOutput/
+correct_output/
