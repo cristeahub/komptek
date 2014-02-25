@@ -129,6 +129,90 @@ This is very efficient and works very well for our case.
 The drawback of this is that we need a bigger memory space than the number of variables.
 Memory is usually not a problem in our time, so this is clearly the best.
 %----------------------------------------------------------------------------------------
+% PROBLEM 2
+%----------------------------------------------------------------------------------------
+\section{Symbol tables and blocks}
+I have not included addresses in this task as I feel you can perfectly show your ability to understand symbol tables conceptually without that field.
+%----------------------------------------------------------------------------------------
+\subsection{Part a)}
+With a stack you start to search from the top of the stack and downwards. At position 1 the stack looks like this.
+\begin{table}[ht!]
+    \begin{center}
+    \begin{tabular}{| l | l |}
+    \hline
+    type  & identifier \\
+    \hline
+    bool   & b          \\
+    \hline
+    \end{tabular}
+    \end{center}
+\end{table}
+\begin{table}[ht!]
+    \begin{center}
+    \begin{tabular}{| l | l |}
+    \hline
+    type  & identifier \\
+    \hline
+    int   & a          \\
+    \hline
+    float & b          \\
+    \hline
+    \end{tabular}
+    \end{center}
+\end{table}
+
+At position 2 the stack looks like this.
+\begin{table}[ht!]
+    \begin{center}
+    \begin{tabular}{| l | l |}
+    \hline
+    type  & identifier \\
+    \hline
+    bool   & a          \\
+    \hline
+    int & c          \\
+    \hline
+    \end{tabular}
+    \end{center}
+\end{table}
+\begin{table}[ht!]
+    \begin{center}
+    \begin{tabular}{| l | l |}
+    \hline
+    type  & identifier \\
+    \hline
+    int   & b          \\
+    \hline
+    float & c          \\
+    \hline
+    \end{tabular}
+    \end{center}
+\end{table}
+\begin{table}[ht!]
+    \begin{center}
+    \begin{tabular}{| l | l |}
+    \hline
+    type  & identifier \\
+    \hline
+    int   & a          \\
+    \hline
+    float & b          \\
+    \hline
+    \end{tabular}
+    \end{center}
+\end{table}
+%----------------------------------------------------------------------------------------
+\subsection{Part b)}
+With a single symbol table you have a scope number which corresponds to which scope one is in.
+%----------------------------------------------------------------------------------------
+\subsection{Part c)}
+With a stack one can easily see which variables are defined in this scope and which are not.
+A good thing with this approach is that scope exit is very easy. You pop the topmost symbol table off the stack and you are done.
+One major drawback is that looking for an element is O(stack size).
+This might take a long time if you happen to have your variable on the last scope.
+
+When you have one single symbol table with a 
+%----------------------------------------------------------------------------------------
 % PROBLEM 3
 %----------------------------------------------------------------------------------------
 \section{Type Checking}
