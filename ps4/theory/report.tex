@@ -97,9 +97,36 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 % PROBLEM 1
 %----------------------------------------------------------------------------------------
 
-\section{Regular Languages}
+\section{Symbol tables}
 
 %----------------------------------------------------------------------------------------
 \subsection{Part a)}
+A symbol table is a table to keep track of the identifiers of a source program.
+There are two related meanings of symbol tables.
+
+One is the symbol table in the object file. This table maps different items of the source program to names that the linker can understand.
+If a function is called a placeholder value is put inside the symbol table for the object file and tells the linker to look up all the references of the object files before finally putting the location there.
+
+The other symbol table is the shared library. This is produced by the linker and names the funcitons and data items. This allows the system to do run-time linking.
+%----------------------------------------------------------------------------------------
+\subsection{Part b)}
+Information regarding the different identifiers are stored in the symbol table.
+This can vary form case to case, but some very common attributes is identifier name, address in memory, type of the identifier and scope.
+%----------------------------------------------------------------------------------------
+\subsection{Part c)}
+One implementation of a symbol table can be an ordered linear list.
+The very good part of this is that the implementation is very easy and straight forward.
+One major downside is that insertion is expensive and operations are slow.
+This is implementation is very rarely used.
+
+Another implementation is a binary search tree.
+While being a bit harder to implement this gives a better time per operation.
+O(log n) is the time for each operation.
+This implementation is not so often used.
+
+The most common implementation is a hash table.
+This is very efficient and works very well for our case.
+The drawback of this is that we need a bigger memory space than the number of variables.
+Memory is usually not a problem in our time, so this is clearly the best.
 %----------------------------------------------------------------------------------------
 \end{document}
