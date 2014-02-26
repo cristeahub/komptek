@@ -208,10 +208,49 @@ With a single symbol table you have a scope number which corresponds to which sc
 \subsection{Part c)}
 With a stack one can easily see which variables are defined in this scope and which are not.
 A good thing with this approach is that scope exit is very easy. You pop the topmost symbol table off the stack and you are done.
-One major drawback is that looking for an element is O(stack size).
+One major drawback is that looking for an element is O(stack size * avg table size), since you might need to look through all the symbol tables in all the stacks.
 This might take a long time if you happen to have your variable on the last scope.
 
-When you have one single symbol table with a 
+\begin{table}[ht!]
+    \begin{center}
+    \begin{tabular}{| l | l | p{6cm} |}
+    \hline
+    Operation  & Time & Description \\
+    \hline
+    Scope Entry & O(hash table size) & Need to initialize new hash table \\
+    \hline
+    Symbol Insertion & O(1) & Insert a symbol on the top of the stack \\
+    \hline
+    Symbol Lookup & O(stack size * avg table size) & In worst case you need to go through all the tables in the whole stach. \\
+    \hline
+    Scope Exit & O(1) & Pop the top of the stack \\
+    \hline
+    \end{tabular}
+    \end{center}
+\end{table}
+
+When you have one single symbol table with a scope number you will have one very big table.
+This means you will have constant lookup time for every variable you have available.
+With a hash table everything has O(1) lookup time, except exiting a scope.
+Exiting the scope is done in O(hash table size) time, since you will need to look through all elements in the table, which is a drawback.
+
+\begin{table}[ht!]
+    \begin{center}
+    \begin{tabular}{| l | l | p{6cm} |}
+    \hline
+    Operation  & Time & Description \\
+    \hline
+    Scope Entry & O(1) & Only single scope variables need to be incremented \\
+    \hline
+    Symbol Insertion & O(1) & Insert a node in a symbol's scope list \\
+    \hline
+    Symbol Lookup & O(1) & Constant time lookup in a hash table \\
+    \hline
+    Scope Exit & O(hash table size) & Will have to go through all the symbols to see if we need to pop some \\
+    \hline
+    \end{tabular}
+    \end{center}
+\end{table}
 %----------------------------------------------------------------------------------------
 % PROBLEM 3
 %----------------------------------------------------------------------------------------
