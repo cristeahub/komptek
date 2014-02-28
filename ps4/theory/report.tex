@@ -307,5 +307,42 @@ And on the bottom there is an integer, which is the smallest.
 \fill [black] (38.5,-32.6) -- (39,-31.8) -- (38,-31.8);
 \end{tikzpicture}
 \end{center}
+
+\section{Types and SDDs}
+
+\subsection{Part a)}
+
+\begin{table}[ht!]
+    \center
+    \begin{tabular}{|l|l|}
+    \hline
+    Production   & Semantic rule   \\ \hline \hline
+    T -> int    & T.size = 4 \\ \hline
+    T -> float  & T.size = 8 \\ \hline
+    T -> bool   & T.size = 1 \\ \hline
+    T -> T[num] & T.size = num * T.size \\ \hline
+    T -> (L)    & T.size = L.size \\ \hline
+    L -> L,T    & L.size = L.size + T.size \\ \hline
+    L -> T      & L.size = T.size \\ \hline
+    \end{tabular}
+    \caption{Completed SDD with size attribute}
+\end{table}
+
+\newpage
+\subsection{Part b)}
+
+\subsubsection{i}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=100mm]{taskbi.png}
+\end{figure}
+
+\newpage
+\subsubsection{ii}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=130mm]{task4bii.png}
+\end{figure}
+
 %----------------------------------------------------------------------------------------
 \end{document}
