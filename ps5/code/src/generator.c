@@ -116,7 +116,7 @@ void gen_PROGRAM ( node_t *root, int scopedepth)
 	TEXT_HEAD_ARM();
 	
 
-    if(root->n_children == 1) {
+    if(root->children[0]->n_children == 1) {
         char *label = root->children[0]->children[0]->label;
 
         instruction_add(CALL, STRDUP(label), NULL, 0, 0);
@@ -146,11 +146,11 @@ void gen_FUNCTION ( node_t *root, int scopedepth )
     instruction_add(LABEL, STRDUP(label), NULL, 0, 0);
     instruction_add(PUSH, lr, NULL, 0, 0);
     instruction_add(PUSH, fp, NULL, 0, 0);
-    instruciton_add(MOVE, fp, sp, 0, 0);
+    instruction_add(MOVE, fp, sp, 0, 0);
 
     gen_default(root, scopedepth);
 
-    instruciton_add(MOVE, sp, fp, 0, 0);
+    instruction_add(MOVE, sp, fp, 0, 0);
     instruction_add(POP, fp, NULL, 0, 0);
     instruction_add(POP, pc, NULL, 0, 0);
 	//Leaving the scope, decreasing depth
@@ -245,7 +245,7 @@ void gen_EXPRESSION ( node_t *root, int scopedepth )
 
 	switch(root->expression_type.index){
 
-		case FUNC_CALL_E:
+		case FUNC_CALL_E:;
             node_t *param_list = root->children[0];
             if(param_list != NULL) {
                 for(int i = 0; i < param_list->n_children; i++) {
@@ -261,7 +261,7 @@ void gen_EXPRESSION ( node_t *root, int scopedepth )
                 instruction_add(POP, r1, NULL, 0, 0);
             }
 
-            if(root->data_type->base_type != VOID_TYPE) {
+            if(root->data_type.base_type != VOID_TYPE) {
                 instruction_add(PUSH, r0, NULL, 0, 0);
             }
 

@@ -20,7 +20,7 @@ void type_error(node_t* root){
 
 int equal_types(data_type_t a, data_type_t b)
 {
-    return (a->base_type == b->base_type) ? 1 : 0;
+    return (a.base_type == b.base_type) ? 1 : 0;
 }
 
 data_type_t typecheck_default(node_t* root)
