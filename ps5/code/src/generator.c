@@ -116,7 +116,7 @@ void gen_PROGRAM ( node_t *root, int scopedepth)
 	TEXT_HEAD_ARM();
 	
 
-    if(root->children[0]->n_children == 1) {
+    if(root->n_children == 1) {
         char *label = root->children[0]->children[0]->label;
 
         instruction_add(CALL, STRDUP(label), NULL, 0, 0);
@@ -289,18 +289,22 @@ void gen_CONSTANT (node_t * root, int scopedepth)
 	tracePrint("Starting CONSTANT\n");
 
     switch(root->data_type.base_type) {
-        case INT_TYPE:
-            char *value = atoi(root->int_const);
-            instruction_add(MOVE32, r1, value, 0, 0);
+        case INT_TYPE:;
+            char buffer[20]; //this should be enough
+            sprintf(buffer, "p%d", root->int_const);
+            instruction_add(MOVE32, STRDUP(buffer), r1, 0, 0);
             instruction_add(PUSH, r1, NULL, 0, 0);
             break;
-        case BOOL_TYPE:
+        case BOOL_TYPE:;
             char *value;
-            (root->bool_const) ? *value = "1" : *value = "0";
+            if (root->bool_const)
+                value = "1";
+            else
+                value = "0";
             instruction_add(STORE, r1, value, 0, 0);
             instruction_add(PUSH, r1, NULL, 0, 0);
             break;
-        case STRING_TYPE:
+        case STRING_TYPE:;
             break;
         default:
             break;
@@ -315,13 +319,12 @@ void gen_ASSIGNMENT_STATEMENT ( node_t *root, int scopedepth )
 	
 	 tracePrint ( "Starting ASSIGNMENT_STATEMENT\n");
 
-	node_t *right = root->children[1];
-    right->generate(right, scopedepth);
+    node_t *right_hand_side = root->children[0];
+    right_hand_side->generate(right_hand_side, scopedepth);
 
     node_t *left = root->children[0];
 
-    instruction_add(POP, r1, NULL, 0, 0);
-    instruction_add(STORE, r1, fp, 0, left->entry->stack_offset);
+    instruction_add(STORE, r0, fp, 0, left->entry->stack_offset);
 
 	tracePrint ( "End ASSIGNMENT_STATEMENT\n");
 }
@@ -330,12 +333,12 @@ void gen_RETURN_STATEMENT ( node_t *root, int scopedepth )
 {
 	
 	tracePrint ( "Starting RETURN_STATEMENT\n");
-	
-    node_t *right = root->children[1];
-    right->generate(right, scopedepth);
+
+    node_t *child = root->children[0];
+    child->generate(child, scopedepth);
 
     instruction_add(POP, r1, NULL, 0, 0);
-	
+
 	tracePrint ( "End RETURN_STATEMENT\n");
 }
 
