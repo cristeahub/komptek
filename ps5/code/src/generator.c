@@ -287,8 +287,22 @@ void gen_VARIABLE ( node_t *root, int scopedepth )
 void gen_CONSTANT (node_t * root, int scopedepth)
 {
 	tracePrint("Starting CONSTANT\n");
-	
 
+    switch(root->data_type.base_type) {
+        case INT_TYPE:
+            add_instruction(MOVE32, r1, root->int_const, 0, 0);
+            add_instruction(PUSH, r1, NULL, 0, 0);
+            break;
+        case BOOL_TYPE:
+            add_instruction(STORE, r1, root->int_const, 0, 0);
+            add_instruction(PUSH, r1, NULL, 0, 0);
+            break;
+        case STRING_TYPE:
+            break;
+        default:
+            break;
+
+    }
 
 	tracePrint("End CONSTANT\n");
 }
@@ -298,10 +312,10 @@ void gen_ASSIGNMENT_STATEMENT ( node_t *root, int scopedepth )
 	
 	 tracePrint ( "Starting ASSIGNMENT_STATEMENT\n");
 
-	node_t *right = root->children[0];
+	node_t *right = root->children[1];
     right->generate(right, scopedepth);
 
-    node_t *left = root->children[1];
+    node_t *left = root->children[0];
 
     instruction_add(POP, r1, NULL, 0, 0);
     instruction_add(STORE, r1, fp, 0, left->entry->stack_offset);
@@ -314,6 +328,10 @@ void gen_RETURN_STATEMENT ( node_t *root, int scopedepth )
 	
 	tracePrint ( "Starting RETURN_STATEMENT\n");
 	
+    node_t *right = root->children[1];
+    right->generate(right, scopedepth);
+
+    instruction_add(POP, r1, NULL, 0, 0);
 	
 	tracePrint ( "End RETURN_STATEMENT\n");
 }
