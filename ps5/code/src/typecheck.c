@@ -37,7 +37,20 @@ data_type_t typecheck_expression(node_t* root)
 
 	toReturn = te(root);
 	
-	//Insert additional checking here
+    // Check if argument list has the same length as children
+    if(root->n_children != root->function_entry->nArguments) {
+        type_error(root);
+    }
+
+    for(int i = 0; i < root->n_children; i++) {
+        node_t *child = root->children[i];
+        if(child != NULL) {
+            if(!equal_types(child->data_type, root->function_entry->argument_types[i])) {
+                type_error(root);
+            }
+        }
+    }
+    
 
 	return toReturn;
 }
@@ -55,7 +68,12 @@ data_type_t typecheck_assignment(node_t* root)
 
 	to_return = te(root);
 
+    data_type_t first = root->children[0]->typecheck(root->children[0]);
+    data_type_t second = root->children[1]->typecheck(root->children[1]);
 
+    if(!equal_types(first, second)) {
+        type_error(root);
+    }
 
     return to_return;
 }

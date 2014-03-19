@@ -259,7 +259,9 @@ void gen_EXPRESSION ( node_t *root, int scopedepth )
             instruction_add(CALL, STRDUP(root->label), NULL, 0, 0);
 
             if(param_list != NULL) {
-                instruction_add(POP, r1, NULL, 0, 0);
+                for(int i = 0; i < param_list->n_children; i++) {
+                    instruction_add(POP, r1, NULL, 0, 0);
+                }
             }
 
             if(root->data_type.base_type != VOID_TYPE) {
@@ -298,10 +300,10 @@ void gen_CONSTANT (node_t * root, int scopedepth)
         case BOOL_TYPE:;
             char *value;
             if (root->bool_const)
-                value = "1";
+                value = "#1";
             else
-                value = "0";
-            instruction_add(STORE, r1, value, 0, 0);
+                value = "#0";
+            instruction_add(MOVE, r1, value, 0, 0);
             instruction_add(PUSH, r1, NULL, 0, 0);
             break;
         case STRING_TYPE:;
