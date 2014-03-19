@@ -290,12 +290,12 @@ void gen_CONSTANT (node_t * root, int scopedepth)
 
     switch(root->data_type.base_type) {
         case INT_TYPE:
-            add_instruction(MOVE32, r1, root->int_const, 0, 0);
-            add_instruction(PUSH, r1, NULL, 0, 0);
+            instruction_add(MOVE32, r1, root->int_const, 0, 0);
+            instruction_add(PUSH, r1, NULL, 0, 0);
             break;
         case BOOL_TYPE:
-            add_instruction(STORE, r1, root->int_const, 0, 0);
-            add_instruction(PUSH, r1, NULL, 0, 0);
+            instruction_add(STORE, r1, root->int_const, 0, 0);
+            instruction_add(PUSH, r1, NULL, 0, 0);
             break;
         case STRING_TYPE:
             break;
