@@ -148,7 +148,8 @@ void gen_FUNCTION ( node_t *root, int scopedepth )
     instruction_add(PUSH, fp, NULL, 0, 0);
     instruction_add(MOVE, fp, sp, 0, 0);
 
-    gen_default(root, scopedepth);
+    node_t *func_body = root->children[1];
+    gen_default(func_body, scopedepth);
 
     instruction_add(MOVE, sp, fp, 0, 0);
     instruction_add(POP, fp, NULL, 0, 0);
@@ -297,9 +298,13 @@ void gen_ASSIGNMENT_STATEMENT ( node_t *root, int scopedepth )
 	
 	 tracePrint ( "Starting ASSIGNMENT_STATEMENT\n");
 
+	node_t *right = root->children[0];
+    right->generate(right, scopedepth);
 
-	
-	
+    node_t *left = root->children[1];
+
+    instruction_add(POP, r1, NULL, 0, 0);
+    instruction_add(STORE, r1, fp, 0, left->entry->stack_offset);
 
 	tracePrint ( "End ASSIGNMENT_STATEMENT\n");
 }
