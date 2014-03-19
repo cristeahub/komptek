@@ -290,11 +290,14 @@ void gen_CONSTANT (node_t * root, int scopedepth)
 
     switch(root->data_type.base_type) {
         case INT_TYPE:
-            instruction_add(MOVE32, r1, root->int_const, 0, 0);
+            char *value = atoi(root->int_const);
+            instruction_add(MOVE32, r1, value, 0, 0);
             instruction_add(PUSH, r1, NULL, 0, 0);
             break;
         case BOOL_TYPE:
-            instruction_add(STORE, r1, root->int_const, 0, 0);
+            char *value;
+            (root->bool_const) ? *value = "1" : *value = "0";
+            instruction_add(STORE, r1, value, 0, 0);
             instruction_add(PUSH, r1, NULL, 0, 0);
             break;
         case STRING_TYPE:
