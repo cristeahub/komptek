@@ -14,8 +14,8 @@ typedef enum {
 /* Registers */
 // stackpointer = r13 = sp, framepointer = r11 / r7 = fp, linkregister (return address) = r14 = lr
 static char
-	*lr = "lr", *r0 = "r0", *r1 = "r1", *r2 = "r2", *r3 = "r3",
-	*fp = "fp", *sp = "sp", *r5 = "r5", *r6 = "r6",
+	*lr = "lr", *r0 = "r0", *r1 = "r1", *r2 = "r2", *r3 = "r3", *r4 = "r4",
+	*fp = "fp", *sp = "sp", *pc = "pc", *r5 = "r5", *r6 = "r6", *r7 = "r7",
 	*d0 = "d0", *d1="d1", *s0 = "s0", *s1 = "s1";
 
 
@@ -116,8 +116,15 @@ void gen_PROGRAM ( node_t *root, int scopedepth)
 	TEXT_HEAD_ARM();
 	
 
-	/* TODO: Insert a call to the first defined function here */
+    if(root->n_children == 1) {
+        char *label = root->children[0]->children[0]->label;
 
+        instruction_add(CALL, STRDUP(label), NULL, 0, 0);
+    } else {
+        char *label = root->children[0]->children[1]->label;
+
+        instruction_add(CALL, STRDUP(label), NULL, 0, 0);
+    }
 
 	tracePrint("End PROGRAM\n");
 
@@ -132,28 +139,30 @@ void gen_PROGRAM ( node_t *root, int scopedepth)
 
 void gen_FUNCTION ( node_t *root, int scopedepth )
 {
-
-
     tracePrint ( "Starting FUNCTION (%s) with depth %d\n", root->label, scopedepth);
-    
-    
 
+    char *label = root->label;
 
+    instruction_add(LABEL, STRDUP(label), NULL, 0, 0);
+    instruction_add(PUSH, lr, NULL, 0, 0);
+    instruction_add(PUSH, fp, NULL, 0, 0);
+    instruciton_add(MOVE, fp, sp, 0, 0);
+
+    gen_default(root, scopedepth);
+
+    instruciton_add(MOVE, sp, fp, 0, 0);
+    instruction_add(POP, fp, NULL, 0, 0);
+    instruction_add(POP, pc, NULL, 0, 0);
 	//Leaving the scope, decreasing depth
 	tracePrint ("Leaving FUNCTION (%s) with depth %d\n", root->label, scopedepth);
-    
 }
-
-
-
-
 
 
 void gen_DECLARATION_STATEMENT (node_t *root, int scopedepth)
 {
 	tracePrint("Starting DECLARATION: adding space on stack\n");
 
-
+    instruction_add(PUSH, r0, NULL, 0, 0);
 
 	tracePrint("Ending DECLARATION\n");
 }
@@ -237,8 +246,24 @@ void gen_EXPRESSION ( node_t *root, int scopedepth )
 	switch(root->expression_type.index){
 
 		case FUNC_CALL_E:
-		
-	
+            node_t *param_list = root->children[0];
+            if(param_list != NULL) {
+                for(int i = 0; i < param_list->n_children; i++) {
+                    node_t *param = param_list->children[i];
+                    instruction_add(STORE, r1, fp, 0, param->entry->stack_offset);
+                    instruction_add(PUSH, r1, NULL, 0, 0);
+                }
+            }
+
+            instruction_add(CALL, STRDUP(root->label), NULL, 0, 0);
+
+            if(param_list != NULL) {
+                instruction_add(POP, r1, NULL, 0, 0);
+            }
+
+            if(root->data_type->base_type != VOID_TYPE) {
+                instruction_add(PUSH, r0, NULL, 0, 0);
+            }
 
 		default:
 			break;
@@ -246,14 +271,6 @@ void gen_EXPRESSION ( node_t *root, int scopedepth )
 
 	tracePrint ( "Ending EXPRESSION of type %s\n", (char*) root->expression_type.text);
 }
-
-
-
-
-
-
-
-
 
 
 void gen_VARIABLE ( node_t *root, int scopedepth )

@@ -20,7 +20,7 @@ void type_error(node_t* root){
 
 int equal_types(data_type_t a, data_type_t b)
 {
-
+    return (a->base_type == b->base_type) ? 1 : 0;
 }
 
 data_type_t typecheck_default(node_t* root)
@@ -38,7 +38,8 @@ data_type_t typecheck_expression(node_t* root)
 	toReturn = te(root);
 	
 	//Insert additional checking here
-	
+
+	return toReturn;
 }
 
 data_type_t typecheck_variable(node_t* root){
@@ -47,5 +48,14 @@ data_type_t typecheck_variable(node_t* root){
 
 data_type_t typecheck_assignment(node_t* root)
 {
+    data_type_t to_return;
 
+	if(outputStage == 10)
+		fprintf( stderr, "Type checking expression %s\n", root->expression_type.text);
+
+	to_return = te(root);
+
+
+
+    return to_return;
 }
