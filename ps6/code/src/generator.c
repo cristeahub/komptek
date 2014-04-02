@@ -331,13 +331,44 @@ void gen_RETURN_STATEMENT ( node_t *root, int scopedepth )
 
 void gen_WHILE_STATEMENT ( node_t *root, int scopedepth )
 {
+    tracePrint("Starting WHILE_STATEMENT\n");
 
+    //TODO: eval expression
+    char *value = "#0";
+    instruction_add(MOVE, r2, value, 0, 0);
+    instruction_add(CMP, r1, r2, 0, 0);
+    // TODO: check if suppose to break
+
+    // generate loop body
+    for(int i = 0; i < root->n_children; i++) {
+        node_t *child = root->children[i];
+        if(child != NULL) {
+            child->generate(child, scopedepth);
+        }
+    }
+    tracePrint("End WHILE_STATEMENT\n");
 }
 
 
 void gen_IF_STATEMENT ( node_t *root, int scopedepth )
 {
+    tracePrint("Starting IF_STATEMENT\n");
 
+    // TODO: eval expression into r1
+    char *value = "#0";
+    instruction_add(MOVE, r2, value, 0, 0);
+    instruction_add(CMP, r1, r2, 0, 0);
+    // TODO: check if else statement, jump accordingly
+
+    for(int i = 0; i < root->n_children; i++) {
+        node_t *child = root->children[i];
+        if(child != NULL) {
+            child->generate(child, scopedepth);
+        }
+    }
+
+    // TODO: add label here with other stuff?
+    tracePrint("End IF_STATEMENT\n");
 }
 
 
