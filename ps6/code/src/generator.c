@@ -233,6 +233,8 @@ void gen_PRINT_STATEMENT(node_t* root, int scopedepth)
 }
 
 
+
+
 void gen_EXPRESSION ( node_t *root, int scopedepth )
 {
     /*
@@ -247,45 +249,36 @@ void gen_EXPRESSION ( node_t *root, int scopedepth )
 
         case FUNC_CALL_E:
             ge(root,scopedepth);
-            //break;
+            break;
 
-            /* Add cases for other expressions here */
+        /* Add cases for other expressions here */
+        case ADD_E:
+        case SUB_E:
+        case MUL_E:
+        case DIV_E:;
+            node_t *left_child = root->children[0];
+            node_t *right_child = root->children[1];
+            right_child->generate(right_child, scopedepth);
+            left_child->generate(left_child, scopedepth);
 
-            switch(root->n_children) {
-                case 1:;
+            instruction_add(POP, r1, NULL, 0, 0);
+            instruction_add(POP, r2, NULL, 0, 0);
+            switch(root->expression_type.index) {
+                case ADD_E:
+                    instruction_add3(ADD, r0, r1, r2);
                     break;
-
-                case 2:;
-                    node_t *left_child = root->children[0];
-                    node_t *right_child = root->children[1];
-                    right_child->generate(right_child, scopedepth);
-                    left_child->generate(left_child, scopedepth);
-
-                    instruction_add(POP, r1, NULL, 0, 0);
-                    instruction_add(POP, r2, NULL, 0, 0);
-
-                    switch(root->expression_type.index) {
-                        case ADD_E:
-                            instruction_add3(ADD, r0, r1, r2);
-                            break;
-                        case SUB_E:
-                            instruction_add3(SUB, r0, r1, r2);
-                            break;
-                        case MUL_E:
-                            instruction_add3(MUL, r0, r1, r2);
-                            break;
-                        case DIV_E:
-                            instruction_add3(DIV, r0, r1, r2);
-                            break;
-                    }
-
-                    instruction_add(PUSH, r0, NULL, 0, 0);
+                case SUB_E:
+                    instruction_add3(SUB, r0, r1, r2);
                     break;
-
-                default:
+                case MUL_E:
+                    instruction_add3(MUL, r0, r1, r2);
+                    break;
+                case DIV_E:
+                    instruction_add3(DIV, r0, r1, r2);
                     break;
             }
-
+            instruction_add(PUSH, r0, NULL, 0, 0);
+            break;
     }
 
     tracePrint ( "Ending EXPRESSION of type %s\n", (char*) root->expression_type.text);
