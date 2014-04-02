@@ -264,12 +264,14 @@ void gen_EXPRESSION ( node_t *root, int scopedepth )
             instruction_add(POP, r2, NULL, 0, 0);
             switch(root->expression_type.index) {
                 case ADD_E:
+                case OR_E:
                     instruction_add3(ADD, r0, r1, r2);
                     break;
                 case SUB_E:
                     instruction_add3(SUB, r0, r1, r2);
                     break;
                 case MUL_E:
+                case AND_E:
                     instruction_add3(MUL, r0, r1, r2);
                     break;
                 case DIV_E:
@@ -304,12 +306,6 @@ void gen_EXPRESSION ( node_t *root, int scopedepth )
                     instruction_add(CMP, r1, r2, 0, 0);
                     instruction_add(MOVE, r0, "#0", 0, 0);
                     instruction_add(MOVGT, r0, "#1", 0, 0);
-                    break;
-                case AND_E:
-                    // TODO: NOT IMPLEMENTED YET
-                    break;
-                case OR_E:
-                    // TODO: NOT IMPLEMENTED YET
                     break;
             }
             instruction_add(PUSH, r0, NULL, 0, 0);
