@@ -382,20 +382,42 @@ void gen_IF_STATEMENT ( node_t *root, int scopedepth )
 {
     tracePrint("Starting IF_STATEMENT\n");
 
-    // TODO: eval expression into r1
-    char *value = "#0";
-    instruction_add(MOVE, r2, value, 0, 0);
-    instruction_add(CMP, r1, r2, 0, 0);
-    // TODO: check if else statement, jump accordingly
+    if_count++;
+    int our_count = if_count;
 
-    for(int i = 0; i < root->n_children; i++) {
-        node_t *child = root->children[i];
-        if(child != NULL) {
-            child->generate(child, scopedepth);
-        }
+    // Expand If-expression
+    node_t *cond = root->children[0];
+    cond->generate(cond, scopedepth);
+
+    char tmp_if_end[20];
+    char tmp_if_else[20];
+    sprintf(tmp_if_end, "_if_end_%d", if_count);
+    sprintf(tmp_if_else, "_if_else_%d", if_count);
+
+    // Test truth value
+    instruction_add(POP, r1, NULL, 0, 0);
+    instruction_add(CMP, r1, "#0", 0, 0);
+
+    node_t *statement_if = root->children[1];
+    if (root->n_children == 2) { // If-end statement
+        // If code
+        instruction_add(JUMPZERO, STRDUP(tmp_if_end), NULL, 0, 0);
+        statement_if->generate(statement_if, scopedepth);
+    } else { // If-else-end statement
+        // If code
+        instruction_add(JUMPZERO, STRDUP(tmp_if_else), NULL, 0, 0);
+        statement_if->generate(statement_if, scopedepth);
+        instruction_add(JUMP, STRDUP(tmp_if_end), NULL, 0, 0);
+
+        // Else code
+        instruction_add(LABEL, STRDUP(tmp_if_else + 1), NULL, 0, 0);
+        node_t *statement_else = root->children[2];
+        statement_else->generate(statement_else, scopedepth);
     }
 
-    // TODO: add label here with other stuff?
+    // End label
+    instruction_add(LABEL, STRDUP(tmp_if_end + 1), NULL, 0, 0);
+
     tracePrint("End IF_STATEMENT\n");
 }
 
