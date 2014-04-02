@@ -361,19 +361,36 @@ void gen_WHILE_STATEMENT ( node_t *root, int scopedepth )
 {
     tracePrint("Starting WHILE_STATEMENT\n");
 
-    //TODO: eval expression
-    char *value = "#0";
-    instruction_add(MOVE, r2, value, 0, 0);
-    instruction_add(CMP, r1, r2, 0, 0);
-    // TODO: check if suppose to break
+    while_count++;
+    int our_count = while_count;
 
-    // generate loop body
-    for(int i = 0; i < root->n_children; i++) {
-        node_t *child = root->children[i];
-        if(child != NULL) {
-            child->generate(child, scopedepth);
-        }
-    }
+    char tmp_while_start[20];
+    char tmp_while_end[20];
+    sprintf(tmp_while_start, "_while_start_%d", our_count);
+    sprintf(tmp_while_end, "_while_end_%d", our_count);
+
+    // Set start label
+    instruction_add(LABEL, STRDUP(tmp_while_start + 1), NULL, 0, 0);
+
+    // Expand while-expression
+    node_t *cond = root->children[0];
+    cond->generate(cond, scopedepth);
+
+    // Test truth value, jump to end if zero
+    instruction_add(POP, r1, NULL, 0, 0);
+    instruction_add(CMP, r1, "#0", 0, 0);
+    instruction_add(JUMPZERO, STRDUP(tmp_while_end), NULL, 0, 0);
+
+    // Execute while-loop statement body
+    node_t *while_body = root->children[1];
+    while_body->generate(while_body, scopedepth);
+
+    // Return to top of while loop)
+    instruction_add(JUMP, STRDUP(tmp_while_start), NULL, 0, 0);
+    
+    // Set end label
+    instruction_add(LABEL, STRDUP(tmp_while_end + 1), NULL, 0 ,0);
+
     tracePrint("End WHILE_STATEMENT\n");
 }
 
