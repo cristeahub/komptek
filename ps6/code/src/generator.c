@@ -252,10 +252,9 @@ void gen_EXPRESSION ( node_t *root, int scopedepth )
             break;
 
         /* Add cases for other expressions here */
-        case ADD_E:
-        case SUB_E:
-        case MUL_E:
-        case DIV_E:;
+        case ADD_E: case SUB_E: case MUL_E: case DIV_E: case LEQUAL_E: case GEQUAL_E:
+        case NEQUAL_E: case EQUAL_E: case LESS_E: case GREATER_E: case AND_E: case OR_E:
+            ;
             node_t *left_child = root->children[0];
             node_t *right_child = root->children[1];
             right_child->generate(right_child, scopedepth);
@@ -275,6 +274,42 @@ void gen_EXPRESSION ( node_t *root, int scopedepth )
                     break;
                 case DIV_E:
                     instruction_add3(DIV, r0, r1, r2);
+                    break;
+                case EQUAL_E:
+                    instruction_add(CMP, r1, r2, 0, 0);
+                    instruction_add(MOVE, r0, "#0", 0, 0);
+                    instruction_add(MOVEQ, r0, "#1", 0, 0);
+                    break;
+                case GEQUAL_E:
+                    instruction_add(CMP, r1, r2, 0, 0);
+                    instruction_add(MOVE, r0, "#0", 0, 0);
+                    instruction_add(MOVGE, r0, "#1", 0, 0);
+                    break;
+                case NEQUAL_E:
+                    instruction_add(CMP, r1, r2, 0, 0);
+                    instruction_add(MOVE, r0, "#0", 0, 0);
+                    instruction_add(MOVNE, r0, "#1", 0, 0);
+                    break;
+                case LEQUAL_E:
+                    instruction_add(CMP, r1, r2, 0, 0);
+                    instruction_add(MOVE, r0, "#0", 0, 0);
+                    instruction_add(MOVLE, r0, "#1", 0, 0);
+                    break;
+                case LESS_E:
+                    instruction_add(CMP, r1, r2, 0, 0);
+                    instruction_add(MOVE, r0, "#0", 0, 0);
+                    instruction_add(MOVLT, r0, "#1", 0, 0);
+                    break;
+                case GREATER_E:
+                    instruction_add(CMP, r1, r2, 0, 0);
+                    instruction_add(MOVE, r0, "#0", 0, 0);
+                    instruction_add(MOVGT, r0, "#1", 0, 0);
+                    break;
+                case AND_E:
+                    // TODO: NOT IMPLEMENTED YET
+                    break;
+                case OR_E:
+                    // TODO: NOT IMPLEMENTED YET
                     break;
             }
             instruction_add(PUSH, r0, NULL, 0, 0);
