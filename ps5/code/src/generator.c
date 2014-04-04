@@ -116,15 +116,9 @@ void gen_PROGRAM ( node_t *root, int scopedepth)
 	TEXT_HEAD_ARM();
 	
 
-    if(root->n_children == 1) {
-        char *label = root->children[0]->children[0]->label;
+    char *label = root->children[0]->children[0]->label;
+    instruction_add(CALL, STRDUP(label), NULL, 0, 0);
 
-        instruction_add(CALL, STRDUP(label), NULL, 0, 0);
-    } else {
-        char *label = root->children[0]->children[1]->label;
-
-        instruction_add(CALL, STRDUP(label), NULL, 0, 0);
-    }
 
 	tracePrint("End PROGRAM\n");
 
@@ -149,7 +143,7 @@ void gen_FUNCTION ( node_t *root, int scopedepth )
     instruction_add(MOVE, fp, sp, 0, 0);
 
     node_t *func_body = root->children[1];
-    gen_default(func_body, scopedepth);
+    gen_default(func_body, scopedepth+1);
 
     instruction_add(MOVE, sp, fp, 0, 0);
     instruction_add(POP, fp, NULL, 0, 0);
@@ -163,7 +157,8 @@ void gen_DECLARATION_STATEMENT (node_t *root, int scopedepth)
 {
 	tracePrint("Starting DECLARATION: adding space on stack\n");
 
-    instruction_add(PUSH, r0, NULL, 0, 0);
+    // leave some space on the stack, just pushing junk
+    instruction_add(PUSH, r4, NULL, 0, 0);
 
 	tracePrint("Ending DECLARATION\n");
 }
@@ -247,26 +242,37 @@ void gen_EXPRESSION ( node_t *root, int scopedepth )
 	switch(root->expression_type.index){
 
 		case FUNC_CALL_E:;
-            node_t *param_list = root->children[0];
+            // save registers on stack
+            instruction_add(PUSH, r3, NULL, 0, 0);
+            instruction_add(PUSH, r2, NULL, 0, 0);
+            instruction_add(PUSH, r1, NULL, 0, 0);
+
+            node_t *param_list = root->children[1];
             if(param_list != NULL) {
                 for(int i = 0; i < param_list->n_children; i++) {
                     node_t *param = param_list->children[i];
-                    instruction_add(STORE, r1, fp, 0, param->entry->stack_offset);
-                    instruction_add(PUSH, r1, NULL, 0, 0);
+                    param->generate(param, scopedepth);
                 }
             }
 
-            instruction_add(CALL, STRDUP(root->label), NULL, 0, 0);
+            instruction_add(CALL, STRDUP(root->children[0]->label), NULL, 0, 0);
 
             if(param_list != NULL) {
                 for(int i = 0; i < param_list->n_children; i++) {
-                    instruction_add(POP, r1, NULL, 0, 0);
+                    // pop parameters from stack into junk
+                    instruction_add(POP, r4, NULL, 0, 0);
                 }
             }
+
+            // restore registers
+            instruction_add(PUSH, r1, NULL, 0, 0);
+            instruction_add(PUSH, r2, NULL, 0, 0);
+            instruction_add(PUSH, r3, NULL, 0, 0);
 
             if(root->data_type.base_type != VOID_TYPE) {
                 instruction_add(PUSH, r0, NULL, 0, 0);
             }
+            break;
 
 		default:
 			break;
@@ -281,7 +287,8 @@ void gen_VARIABLE ( node_t *root, int scopedepth )
 	
 	tracePrint ( "Starting VARIABLE\n");
 
-	
+    instruction_add(LOAD, r0, fp, 0, root->entry->stack_offset);
+    instruction_add(PUSH, r0, NULL, 0, 0);
 
 	tracePrint ( "End VARIABLE %s, stack offset: %d\n", root->label, root->entry->stack_offset);
 }
@@ -293,20 +300,30 @@ void gen_CONSTANT (node_t * root, int scopedepth)
     switch(root->data_type.base_type) {
         case INT_TYPE:;
             char buffer[20]; //this should be enough
-            sprintf(buffer, "p%d", root->int_const);
-            instruction_add(MOVE32, STRDUP(buffer), r1, 0, 0);
-            instruction_add(PUSH, r1, NULL, 0, 0);
+            sprintf(buffer, ".%d", root->int_const);
+            instruction_add(MOVE32, STRDUP(buffer), r0, 0, 0);
+            instruction_add(PUSH, r0, NULL, 0, 0);
             break;
         case BOOL_TYPE:;
-            char *value;
+            char *bool_value;
             if (root->bool_const)
-                value = "#1";
+                bool_value = "#1";
             else
-                value = "#0";
-            instruction_add(MOVE, r1, value, 0, 0);
-            instruction_add(PUSH, r1, NULL, 0, 0);
+                bool_value = "#0";
+            instruction_add(MOVE, r0, STRDUP(bool_value), 0, 0);
+            instruction_add(PUSH, r0, NULL, 0, 0);
             break;
         case STRING_TYPE:;
+            char string_buffer[20];
+            // the sprintf eat a character
+            // this gets fixed by adding anohter .
+            // Alternative way would be to this:
+            // instruction_add(STRING, STRDUP("\tmovw	r0, #:lower16:.STRINGX"), NULL, 0,0);
+            // instruction_add(STRING, STRDUP("\tmovt	r0, #:upper16:.STRINGX"), NULL, 0,0);
+
+            sprintf(string_buffer, "..STRING%d", root->string_index);
+            instruction_add(MOVE32, STRDUP(string_buffer), r0, 0, 0);
+            instruction_add(PUSH, r0, NULL, 0, 0);
             break;
         default:
             break;
@@ -321,8 +338,11 @@ void gen_ASSIGNMENT_STATEMENT ( node_t *root, int scopedepth )
 	
 	 tracePrint ( "Starting ASSIGNMENT_STATEMENT\n");
 
-    node_t *right_hand_side = root->children[0];
+    node_t *right_hand_side = root->children[1];
     right_hand_side->generate(right_hand_side, scopedepth);
+
+    // pop for const, variables and returns
+    instruction_add(POP, r0, NULL, 0, 0);
 
     node_t *left = root->children[0];
 
@@ -339,7 +359,8 @@ void gen_RETURN_STATEMENT ( node_t *root, int scopedepth )
     node_t *child = root->children[0];
     child->generate(child, scopedepth);
 
-    instruction_add(POP, r1, NULL, 0, 0);
+    // r0 should have contents, pop into trash register
+    instruction_add(POP, r4, NULL, 0, 0);
 
 	tracePrint ( "End RETURN_STATEMENT\n");
 }

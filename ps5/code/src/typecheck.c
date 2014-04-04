@@ -20,7 +20,7 @@ void type_error(node_t* root){
 
 int equal_types(data_type_t a, data_type_t b)
 {
-    return (a.base_type == b.base_type) ? 1 : 0;
+    return (a.base_type == b.base_type);
 }
 
 data_type_t typecheck_default(node_t* root)
@@ -37,20 +37,39 @@ data_type_t typecheck_expression(node_t* root)
 
 	toReturn = te(root);
 	
-    // Check if argument list has the same length as children
-    if(root->n_children != root->function_entry->nArguments) {
-        type_error(root);
-    }
+    et_number expression_type_number = root->expression_type.index;
+    switch(expression_type_number) {
+        case FUNC_CALL_E:
+        case METH_CALL_E:
+            ;
+            int list_index = (expression_type_number == FUNC_CALL_E) ? 1 : 2;
+            function_symbol_t *func_sym = root->function_entry;
+            node_t *expression_list = root->children[list_index];
 
-    for(int i = 0; i < root->n_children; i++) {
-        node_t *child = root->children[i];
-        if(child != NULL) {
-            if(!equal_types(child->data_type, root->function_entry->argument_types[i])) {
-                type_error(root);
+            if(expression_list == NULL) {
+                if(func_sym->nArguments != 0) {
+                    type_error(root);
+               }
+            } else {
+                if(func_sym->nArguments == expression_list->n_children) {
+                    for(int i=0; i < expression_list->n_children; i++) {
+                        node_t *child = expression_list->children[i];
+                        if(!equal_types(child->data_type, func_sym->argument_types[i])) {
+                            type_error(root);
+                        }
+                    }
+                } else {
+                    type_error(root);
+                }
             }
-        }
+            toReturn = root->function_entry->return_type;
+            break;
+
+    case CLASS_FIELD_E:
+            toReturn = root->entry->type;
+            break;
     }
-    
+    root->data_type = toReturn;
 
 	return toReturn;
 }
@@ -68,12 +87,14 @@ data_type_t typecheck_assignment(node_t* root)
 
 	to_return = te(root);
 
-    data_type_t first = root->children[0]->typecheck(root->children[0]);
-    data_type_t second = root->children[1]->typecheck(root->children[1]);
+    node_t *expression = root->children[1];
 
-    if(!equal_types(first, second)) {
+    data_type_t type_left = root->children[0]->entry->type;
+    data_type_t type_right = expression->typecheck(expression);
+
+    if(!equal_types(type_left, type_right)) {
         type_error(root);
     }
 
-    return to_return;
+    return type_left;
 }
